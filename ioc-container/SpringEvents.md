@@ -117,3 +117,75 @@ public class NewSignUpListener {
     }
 }
 ```
+So, basically you annotate the method that handles an event with `@EventListener` and pass the event as a parameter.
+Leave the rest for spring to handle. In the below code, we are simply trying to trigger the event we just developed.
+```java
+package learn.bigotron.dev;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
+
+@Configuration
+public class Main {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext("learn.bigotron.dev");
+        Arrays.stream(context.getBeanDefinitionNames()).forEach(System.out::println);
+
+        UserRegisterService registerService = context.getBean(UserRegisterService.class);
+        registerService.registerNewUser("James", "james@gmail.com");
+        registerService.registerNewUser("Mary", "mary@gmail.com");
+    }
+}
+```
+---
+Well, after you get the hang of the mechanics of events, you might be having some curious questions like 'what if I 
+create multiple event handlers for a single event?'
+```java
+package learn.bigotron.dev;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class NewSignUpListener {
+    @EventListener
+    public void handleNewUserSignUp(NewUserSignUpEvent event) {
+        System.out.printf("\uD83C\uDF89Congrats, %s on singing up on our platform\n", event.userName());
+        System.out.printf("\uD83C\uDF81As you are new here, we have sent a valuable coupon to your email at %s\n", event.userEmail());
+    }
+
+    @EventListener
+    public void handleNewUserCustomization(NewUserSignUpEvent event) {
+        System.out.printf("The platform is choosing topics that might be of interest to %s\n", event.userName());
+    }
+}
+```
+So, the idea here is that we have two handlers for the same event and spring doesn't guarantee a particular order in 
+which it will call the handlers so you might get different results but to specify a specific order you can use `@Order`
+annotation. The lesser the value of the integer, the higher the priority.
+```java
+package learn.bigotron.dev;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+public class NewSignUpListener {
+    @EventListener
+    @Order(1)
+    public void handleNewUserSignUp(NewUserSignUpEvent event) {
+        System.out.printf("\uD83C\uDF89Congrats, %s on singing up on our platform\n", event.userName());
+        System.out.printf("\uD83C\uDF81As you are new here, we have sent a valuable coupon to your email at %s\n", event.userEmail());
+    }
+
+    @EventListener
+    @Order(2)
+    public void handleNewUserCustomization(NewUserSignUpEvent event) {
+        System.out.printf("The platform is choosing topics that might be of interest to %s\n", event.userName());
+    }
+}
+```

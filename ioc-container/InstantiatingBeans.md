@@ -55,3 +55,13 @@ public class Con1 {
 ```
 In the above code, we are creating a `Connection` bean using a static factory method. The benefit of doing so is that 
 we can decide which subclass to use during runtime.
+---
+Ok, now let's talk more about spring way of creating bean objects using constructors. One best feature of spring is 
+that spring doesn't ask you to implement a particular framework related interface or class. So basically, it doesn't 
+pollute your code with its extensions. A no-arg constructor is needed when spring creates an object first then injects
+its dependencies. It happens when using setter injection or field injection.
+According to spring documentation, a true java bean has these features:
+- has a public no-arg constructor
+- has private fields
+- has getters and setters
+- follows naming conventions

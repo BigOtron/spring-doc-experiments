@@ -5,5 +5,4 @@
 - In Spring, DI exists in two major variants: Constructor-based dependency injection and Setter-based dependency
   injection.
 - Constructor-based DI is accomplished by the container invoking a constructor with a number of arguments, 
-  each representing a dependency. 
-- 
+  each representing a dependency.

@@ -27,3 +27,30 @@ public class UserService {
     }
 }
 ```
+- When a spring bean is scoped as singleton, spring creates exactly one object, keeps it in memory, and returns the 
+  same object every time it is requested. Important note is that since singleton beans are shared, they must be thread-safe
+  and avoid mutable state.
+```java
+@Service
+public class VisitCounterService {
+
+  private int counter = 0;
+  
+  public int incrementAndGet() {
+    counter++;
+    return counter;
+  }
+} 
+```
+One solution to the above problem can be:
+```java
+@Service
+public class VisitCounterService {
+
+    private final AtomicInteger counter = new AtomicInteger(0);
+
+    public int incrementAndGet() {
+        return counter.incrementAndGet();
+    }
+}
+```

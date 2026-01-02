@@ -101,6 +101,12 @@ public class Main {
 ```
 - `@Configuration` causes Spring to proxy the class so that calls between `@Bean` methods go through the IoC container, 
   guaranteeing singleton reuse; without it, method calls are plain Java and can create multiple instances.
+- When @Bean methods are declared within classes that are not annotated with @Configuration, or when 
+  @Configuration(proxyBeanMethods=false) is declared, they are referred to as being processed in a "lite" mode. 
+  In such scenarios, @Bean methods are effectively a general-purpose factory method mechanism without special 
+  runtime processing (that is, without generating a CGLIB subclass for it). A custom Java call to such a method will 
+  not get intercepted by the container and therefore behaves just like a regular method call, creating a new 
+  instance every time rather than reusing an existing singleton (or scoped) instance for the given bean.
 - 
 
 

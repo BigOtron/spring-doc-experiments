@@ -38,4 +38,69 @@ public class OrderService {
     }
 }
 ```
+- Spring’s Java-based configuration mainly uses `@Configuration` classes and `@Bean` methods.
+  A `@Bean` method creates and configures an object that Spring manages—just like a `<bean>` in XML.
+  While `@Bean` can be used in any `@Component`, it’s primarily intended for use inside `@Configuration` classes.
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserService userService() {
+        return new UserService();
+    }
+}
+
+@Configuration
+public class AppConfig {
+
+  @Bean
+  public OrderService orderService(PaymentService paymentService) { // Spring will automatically inject PaymentService
+    return new OrderService(paymentService);
+  }
+}
+```
+- The reason why Spring recommends using `@Configuration` not `@Component` with `@Bean` is that the first annotation
+  guarantees the `@Bean` methods are called once if the scope is singleton.
+```java
+package learn.bigotron.dev;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public A getA() {
+        return new A("hello from A");
+    }
+
+    @Bean
+    public B getB() {
+        return new B(getA());
+    }
+
+}
+```
+```java
+package learn.bigotron.dev;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class Main {
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("learn.bigotron.dev");
+
+        A a = context.getBean(A.class);
+        B b = context.getBean(B.class);
+        // If the annotation is @Configuration, we get true but if it is @Component it prints false
+        System.out.println(a == b.getA());
+    }
+}
+```
+- `@Configuration` causes Spring to proxy the class so that calls between `@Bean` methods go through the IoC container, 
+  guaranteeing singleton reuse; without it, method calls are plain Java and can create multiple instances.
+- 
+
 

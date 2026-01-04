@@ -65,3 +65,18 @@ public class MovieRecommender {
 	}
 }
 ```
+- A Spring BeanPostProcessor uses a ConversionService behind the scenes to handle the process for converting the 
+  String value in @Value to the target type. If you want to provide conversion support for your own custom type, 
+  you can provide your own ConversionService bean instance as the following example shows:
+```java
+@Configuration
+public class AppConfig {
+
+	@Bean
+	public ConversionService conversionService() {
+		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+		conversionService.addConverter(new MyCustomConverter());
+		return conversionService;
+	}
+}
+```

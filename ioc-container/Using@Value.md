@@ -53,3 +53,15 @@ public class A {
 // inside application.properties:
 // app.supported.languages=en,uz,de,fr
 ```
+- It is possible to provide a default value as following:
+```java
+@Component
+public class MovieRecommender {
+
+	private final String catalog;
+
+	public MovieRecommender(@Value("${catalog.name:defaultCatalog}") String catalog) {
+		this.catalog = catalog;
+	}
+}
+```

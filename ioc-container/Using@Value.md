@@ -31,4 +31,25 @@ public class AppConfig { }
 ```
 - Spring Boot configures by default a PropertySourcesPlaceholderConfigurer bean that will get properties from 
   application.properties and application.yml files.
-- 
+- Built-in converter support provided by Spring allows simple type conversion (to Integer or int for example) to be 
+  automatically handled. Multiple comma-separated values can be automatically converted to String array without extra 
+  effort.
+```java
+package learn.bigotron.dev;
+
+import org.springframework.beans.factory.annotation.Value;
+import java.util.Arrays;
+
+public class A {
+    @Value("${app.supported.languages}")
+    private final String[] supportedLanguages;
+
+    public void printSupportedLanguages() {
+        Arrays
+                .stream(supportedLanguages)
+                .forEach(System.out::println);
+    }
+}
+// inside application.properties:
+// app.supported.languages=en,uz,de,fr
+```

@@ -80,3 +80,45 @@ public class AppConfig {
 	}
 }
 ```
+- This is my custom example:
+```java
+// price=100:UZS (in application.properties)
+public record Money(BigDecimal amount, String currency) {
+}
+
+// custom converter
+public class PricePropertyConverter implements Converter<String, Money> {
+    @Override
+    public Money convert(String source) {
+        String[] priceParts = source.split(":");
+        return new Money(new BigDecimal(priceParts[0]), priceParts[1]);
+    }
+}
+
+// registering the converter in ConversionService
+@Component
+public class AppConfig {
+
+    @Bean
+    public ConversionService conversionService() {
+        DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+        conversionService.addConverter(new PricePropertyConverter());
+        return conversionService;
+    }
+
+    @Bean
+    public A a() {
+        return new A();
+    }
+}
+
+public class A {
+    @Value("${price}")
+    Money money;
+
+    public void printMoneyParts() {
+        System.out.println(money.amount());
+        System.out.println(money.currency());
+    }
+}
+```

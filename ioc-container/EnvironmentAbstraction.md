@@ -79,3 +79,37 @@ public class AppConfig {
 ```
 - There might be problems with overloaded methods that create beans and that are annotated with @Profile. So the
   solution is like above; use different method names and mark the bean names as the same.
+- Activating a profile can be done in several ways, but the most straightforward is to do it programmatically against 
+  the Environment API which is available through an ApplicationContext. The following example shows how to do so:
+```java
+void main() {
+    AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+    ctx.getEnvironment().setActiveProfiles("development");
+    ctx.register(SomeConfig.class, StandaloneDataConfig.class, JndiDataConfig.class);
+    ctx.refresh();
+}
+```
+- Spring lets you activate profiles declaratively, meaning you tell Spring which profiles are active outside the code, 
+  through configuration or environment.
+  - `spring.profiles.active property`. This is the most common method. You set a property called spring.profiles.active 
+    to a comma-separated list of profiles.
+  - Set an environment variable in your OS:
+    - `export SPRING_PROFILES_ACTIVE=prod`
+  - You can pass it as a command-line argument when starting your app:
+    - `java -jar myapp.jar -Dspring.profiles.active=dev`
+- The default profile represents the profile that is enabled if no profile is active. Consider the following example:
+```java
+@Configuration
+@Profile("default") // if no profile is active, the dataSource is created.
+public class DefaultDataConfig {
+
+	@Bean
+	public DataSource dataSource() {
+		return new EmbeddedDatabaseBuilder()
+			.setType(EmbeddedDatabaseType.HSQL)
+			.addScript("classpath:com/bank/config/sql/schema.sql")
+			.build();
+	}
+}
+```
+- 

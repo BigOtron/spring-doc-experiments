@@ -112,4 +112,48 @@ public class DefaultDataConfig {
 	}
 }
 ```
+- The @PropertySource annotation provides a convenient and declarative mechanism for adding a PropertySource to 
+  Spring’s Environment. Given a file called app.properties that contains the key-value pair testbean.name=myTestBean, 
+  the following @Configuration class uses @PropertySource in such a way that a call to testBean.getName() returns 
+  myTestBean:
+```java
+@Configuration
+@PropertySource("classpath:/com/myco/app.properties")
+public class AppConfig {
+
+ @Autowired
+ Environment env;
+
+ @Bean
+ public TestBean testBean() {
+  TestBean testBean = new TestBean();
+  testBean.setName(env.getProperty("testbean.name"));
+  return testBean;
+ }
+}
+```
+- Any ${...} placeholders present in a @PropertySource resource location are resolved against the set of property 
+  sources already registered against the environment, as the following example shows:
+```java
+@Configuration
+@PropertySource("classpath:/com/${my.placeholder:default/path}/app.properties")
+public class AppConfig {
+
+ @Autowired
+ Environment env;
+
+ @Bean
+ public TestBean testBean() {
+  TestBean testBean = new TestBean();
+  testBean.setName(env.getProperty("testbean.name"));
+  return testBean;
+ }
+}
+```
+- Assuming that `my.placeholder` is present in one of the property sources already registered 
+  (for example, system properties or environment variables), the placeholder is resolved to the corresponding value. 
+  If not, then default/path is used as a default. If no default is specified and a property cannot be resolved, 
+  an IllegalArgumentException is thrown.
+- @PropertySource can be used as a repeatable annotation. @PropertySource may also be used as a meta-annotation to 
+  create custom composed annotations with attribute overrides.
 - 

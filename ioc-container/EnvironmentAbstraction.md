@@ -156,4 +156,15 @@ public class AppConfig {
   an IllegalArgumentException is thrown.
 - @PropertySource can be used as a repeatable annotation. @PropertySource may also be used as a meta-annotation to 
   create custom composed annotations with attribute overrides.
-- 
+- LoadTimeWeaver is a Spring mechanism that allows the framework to intercept and modify Java class bytecode at the 
+  moment the JVM loads the class. Normally, once a class is loaded into the JVM, its structure is fixed. 
+  Load-time weaving works before this finalization, giving Spring a chance to transform the class dynamically.
+- The LoadTimeWeaver is used by Spring to dynamically transform classes as they are loaded into the Java virtual 
+  machine (JVM). To enable load-time weaving, you can add the @EnableLoadTimeWeaving to one of your @Configuration 
+  classes, as the following example shows:
+```java
+@Configuration
+@EnableLoadTimeWeaving
+public class AppConfig {
+}
+```
